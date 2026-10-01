@@ -1,6 +1,7 @@
 package com.jame.dev.gymApp.features.auth.application.service;
 
 import com.jame.dev.gymApp.infrastructure.security.hash.HashExecutor;
+import com.jame.dev.gymApp.features.auth.api.request.VerificationRequest;
 import com.jame.dev.gymApp.features.auth.application.contract.verification.VerificationService;
 import com.jame.dev.gymApp.infrastructure.security.lock.CheckLockProcess;
 import com.jame.dev.gymApp.features.auth.application.support.factory.VerificationFactory;
@@ -47,21 +48,11 @@ public class VerificationApplicationService implements VerificationService {
 
    @Override
    @Transactional
-   public void verify(final String email, final String rawToken) {
-      final VerificationEntity verification = verificationRepository.findByUser_Email(email)
-         .orElseThrow(() -> new VerificationNotFoundException("Verification record not found for: " + email));
+   public void verify(final VerificationRequest request) {
+      final VerificationEntity verification = verificationRepository.findByUser_Email(request.email())
+         .orElseThrow(() -> new VerificationNotFoundException("Verification record not found for: " + request.email()));
 
-      if (verification.isVerified())
-         throw new AlreadyVerifiedException("Account has already been verified.");
-
-      verificationEvaluatorHelper.evaluateVerificationToken(
-         verification.getToken(),
-         rawToken,
-         verification.getExpiration()
-      );
-
-      verification.setVerified(true);
-      verificationRepository.saveAndFlush(verification);
+      verify(verification, request.rawToken());
    }
 
    @Override

@@ -1,14 +1,16 @@
 package com.jame.dev.gymApp.features.auth.application.contract.verification;
 
+import com.jame.dev.gymApp.features.auth.api.request.VerificationRequest;
 import com.jame.dev.gymApp.features.auth.domain.model.VerificationEntity;
 import com.jame.dev.gymApp.features.user.domain.model.UserEntity;
 import com.jame.dev.gymApp.infrastructure.annotation.EmailValid;
 import com.jame.dev.gymApp.infrastructure.annotation.NotEmptyNull;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
 public interface VerificationService {
    VerificationEntity save(@NotNull UserEntity user, @NotEmptyNull final String token);
-   void verify(@EmailValid final String email, @NotEmptyNull final String rawToken);
+   void verify(@Valid @NotNull final VerificationRequest request);
    VerificationEntity getByUserEmail(@EmailValid final String email);
    VerificationEntity getByDeactivatedUserEmail(final String email);
    void verify(@NotNull VerificationEntity verificationEntity, String rawToken);
