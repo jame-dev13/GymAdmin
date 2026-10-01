@@ -9,24 +9,24 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
 @RequestMapping("/auth/verify")
 @RequiredArgsConstructor
+@Validated
 public class VerificationController {
 
    private final VerificationService verificationService;
 
-   @PatchMapping("/{email}")
+   @PatchMapping
    public ResponseEntity<Void> verifyAccount(
-           @PathVariable
-           @EmailValid final String email,
            @RequestBody
            @Valid
            @NotNullObject final VerificationRequest request) {
-      verificationService.verify(email, request.token());
+      verificationService.verify(request);
       return ResponseEntity.ok().build();
    }
 

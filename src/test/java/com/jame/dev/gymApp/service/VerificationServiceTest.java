@@ -1,5 +1,6 @@
 package com.jame.dev.gymApp.service;
 
+import com.jame.dev.gymApp.features.auth.api.request.VerificationRequest;
 import com.jame.dev.gymApp.infrastructure.security.hash.HashExecutor;
 import com.jame.dev.gymApp.features.auth.application.service.VerificationApplicationService;
 import com.jame.dev.gymApp.features.auth.application.support.factory.VerificationFactory;
@@ -83,7 +84,7 @@ public class VerificationServiceTest {
         given(verificationRepository.saveAndFlush(any(VerificationEntity.class)))
                 .willReturn(verification);
 
-        assertDoesNotThrow(() -> service.verify(email, "rawToken"));
+        assertDoesNotThrow(() -> service.verify(new VerificationRequest(email, "rawToken")));
 
         then(verificationRepository).should().findByUser_Email(email);
         then(verificationEvaluatorHelper).should()
@@ -106,7 +107,7 @@ public class VerificationServiceTest {
 
         assertThrowsExactly(
                 AlreadyVerifiedException.class,
-                () -> service.verify(email, "rawToken")
+                () -> service.verify(new VerificationRequest(email, "rawToken"))
         );
 
         then(verificationRepository).should().findByUser_Email(email);
@@ -122,7 +123,7 @@ public class VerificationServiceTest {
 
         assertThrowsExactly(
                 VerificationNotFoundException.class,
-                () -> service.verify("email@mail.com", "rawToken")
+                () -> service.verify(new VerificationRequest("email@mail.com", "rawToken"))
         );
 
         then(verificationRepository).should().findByUser_Email(anyString());
@@ -146,7 +147,7 @@ public class VerificationServiceTest {
 
         assertThrowsExactly(
                 VerificationAttemptFailedException.class,
-                () -> service.verify("email@mail.com", "rawToken")
+                () -> service.verify(new VerificationRequest("email@mail.com", "rawToken"))
         );
 
         then(verificationRepository).should().findByUser_Email(anyString());
