@@ -53,6 +53,7 @@ public class WebSecurityConfig {
             .requestMatchers("/error").permitAll()
             .requestMatchers("/favicon.ico").permitAll()
             .requestMatchers(HttpMethod.POST, "/app/v1/checkout/webhook/stripe").permitAll()
+            .requestMatchers("/public/**").permitAll()
             .anyRequest().authenticated()
          )
          .sessionManagement(session -> session

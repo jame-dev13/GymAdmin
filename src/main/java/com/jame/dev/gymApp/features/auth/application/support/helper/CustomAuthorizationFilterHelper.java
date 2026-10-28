@@ -30,7 +30,7 @@ public class CustomAuthorizationFilterHelper {
       final String uri = request.getRequestURI();
       final boolean collaterals = uri.startsWith("/favicon.ico") || uri.startsWith("/error");
       final boolean oauth = (uri.startsWith("/oauth2") || uri.startsWith("/login/oauth2"));
-      return uri.startsWith("/auth") || oauth || collaterals;
+      return uri.startsWith("/auth") || oauth || collaterals || uri.startsWith("/public");
    }
 
    public boolean isStripeWebHook(final HttpServletRequest request) {
