@@ -5,6 +5,7 @@ import com.jame.dev.gymApp.features.audit.domain.exception.AuditLogNotFoundExcep
 import com.jame.dev.gymApp.features.audit.domain.exception.AuditResolverException;
 import com.jame.dev.gymApp.features.auth.domain.exception.*;
 import com.jame.dev.gymApp.features.backup.domain.exception.BackupException;
+import com.jame.dev.gymApp.features.comments.domain.exception.InappropriateLanguageException;
 import com.jame.dev.gymApp.features.customer.domain.exception.CustomerNotFoundException;
 import com.jame.dev.gymApp.features.notification.domain.exception.NotificationException;
 import com.jame.dev.gymApp.features.notification.domain.exception.SubscriberException;
@@ -417,5 +418,10 @@ public class GlobalExceptionHandler {
    @ExceptionHandler(AuditResolverException.class)
    public ResponseEntity<ApiErrorResponse> handleAuditResolverException(AuditResolverException ex, HttpServletRequest request) {
       return responseFactory.of(ApiErrorKind.INTERNAL_FAILURE, ex, request);
+   }
+
+   @ExceptionHandler(InappropriateLanguageException.class)
+   public ResponseEntity<ApiErrorResponse> handleInappropriateLanguageException(InappropriateLanguageException ex, HttpServletRequest request) {
+      return responseFactory.of(ApiErrorKind.VALIDATION_FAILURE, ex, request);
    }
 }
