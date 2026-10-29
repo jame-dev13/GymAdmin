@@ -10,6 +10,10 @@ import java.util.UUID;
 public interface CommentQueryRepository {
    Page<CommentDocument> findAll(final Pageable pageable, final String search);
 
+   Page<CommentDocument> findAllByAuthorId(final Long authorId, final Pageable pageable, final String search);
+
    Optional<CommentDocument> findById(final UUID commentId);
+
+   Optional<CommentDocument> findByIdAndAuthorId(final UUID commentId, final Long authorId);
 
 }

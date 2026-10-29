@@ -20,10 +20,13 @@ public class CommentDocument {
 
    @MongoId
    @Builder.Default
-   private final UUID id = UUID.randomUUID();
+   private final UUID id =  UUID.randomUUID();
+
+   @Field("authorId")
+   @Indexed(name = "comment_author_id_idx")
+   private Long authorId;
 
    @Field("from")
-   @Indexed(name = "comment_from_idx")
    private String from;
 
    @Field("comment")

@@ -10,6 +10,8 @@ import org.aspectj.lang.annotation.Aspect;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+
 @Slf4j
 @Aspect
 @Component
@@ -19,16 +21,16 @@ public class CommentSavingProxy {
    @Lazy
    private final OffenseTextFilter offenseTextFilter;
 
-   @Around(
-      value = """
-         @annotation(com.jame.dev.gymApp.features.comments.infrastructure.annotation.OffenseFilter)
-         && args(commentRequest)
-         """,
-      argNames = "pj,commentRequest"
-   )
-   public Object interceptCommentSavingFlow(ProceedingJoinPoint pj, CommentRequest commentRequest) throws Throwable {
+   @Around("@annotation(com.jame.dev.gymApp.features.comments.infrastructure.annotation.OffenseFilter)")
+   public Object interceptCommentSavingFlow(ProceedingJoinPoint pj) throws Throwable {
       log.info("Comment Saving proxy reached.");
       try {
+         final CommentRequest commentRequest = Arrays.stream(pj.getArgs())
+            .filter(CommentRequest.class::isInstance)
+            .map(CommentRequest.class::cast)
+            .findFirst()
+            .orElseThrow(() -> new IllegalArgumentException("Comment request parameter not found."));
+
          offenseTextFilter.applyFilter(commentRequest.comment());
          return pj.proceed();
       } catch (Throwable th) {

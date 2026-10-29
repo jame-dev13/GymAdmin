@@ -30,7 +30,12 @@ public class CommentFactory {
    }
 
    public CommentDocument fromRequest(CommentRequest commentRequest) {
+      return fromRequest(commentRequest, null);
+   }
+
+   public CommentDocument fromRequest(CommentRequest commentRequest, Long authorId) {
       return CommentDocument.builder()
+         .authorId(authorId)
          .from(commentRequest.from())
          .comment(commentRequest.comment())
          .commentType(commentRequest.commentType())
