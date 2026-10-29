@@ -24,7 +24,17 @@ public class CommentQueryMongoRepository implements CommentQueryRepository {
    }
 
    @Override
+   public Page<CommentDocument> findAllByAuthorId(Long authorId, Pageable pageable, String search) {
+      return commentRepository.searchByAuthor(authorId, pageable, search);
+   }
+
+   @Override
    public Optional<CommentDocument> findById(UUID commentId) {
       return commentRepository.findById(commentId);
+   }
+
+   @Override
+   public Optional<CommentDocument> findByIdAndAuthorId(UUID commentId, Long authorId) {
+      return commentRepository.findByIdAndAuthorId(commentId, authorId);
    }
 }

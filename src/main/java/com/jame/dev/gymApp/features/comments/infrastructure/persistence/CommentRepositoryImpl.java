@@ -15,14 +15,30 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-public class CommentRepositoryImpl implements CustomMongoSpecification<CommentDocument> {
+public class CommentRepositoryImpl implements
+   CustomMongoSpecification<CommentDocument>,
+   CommentAuthorSpecification {
    private final MongoTemplate mt;
 
    @Override
    public Page<CommentDocument> search(Pageable pageable, String search) {
       final Query query = new Query();
       query.with(pageable);
+      applySearchCriteria(query, search);
 
+      return toPage(query, pageable);
+   }
+
+   @Override
+   public Page<CommentDocument> searchByAuthor(Long authorId, Pageable pageable, String search) {
+      final Query query = new Query(Criteria.where("authorId").is(authorId));
+      query.with(pageable);
+      applySearchCriteria(query, search);
+
+      return toPage(query, pageable);
+   }
+
+   private void applySearchCriteria(final Query query, final String search) {
       if (search != null && !search.isBlank()) {
          query.addCriteria(
             new Criteria()
@@ -33,7 +49,9 @@ public class CommentRepositoryImpl implements CustomMongoSpecification<CommentDo
                )
          );
       }
+   }
 
+   private Page<CommentDocument> toPage(final Query query, final Pageable pageable) {
       final List<CommentDocument> content = mt.find(query, CommentDocument.class);
       final long totalElements = mt.count(
          Query.of(query)
