@@ -46,7 +46,7 @@ public class CommentRepositoryImpl implements
    @Override
    public Set<CommentDocument> findBestRatedLimited(int limit) {
       final Query qr = new Query(Criteria.where("commentType").is(CommentType.OPINION))
-         .with(Sort.by(Sort.Order.asc("rate")))
+         .with(Sort.by(Sort.Order.desc("rate"), Sort.Order.desc("createdAt")))
          .limit(limit);
       return new HashSet<>(mt.find(qr, CommentDocument.class));
    }
