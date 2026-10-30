@@ -36,12 +36,14 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
    protected void doFilterInternal(HttpServletRequest request,
                                    @NonNull HttpServletResponse response,
                                    @NonNull FilterChain filterChain) {
-      if (authorizationHelper.isStripeWebHook(request)) {
+      log.info(request.getRequestURI());
+
+      if (authorizationHelper.isStripeWebHook(request) || authorizationHelper.isPublicDoor(request)) {
          blockExecutorService.executeVoidBlock(request, response, () ->
             filterChain.doFilter(request, response));
          return;
       }
-      log.info(request.getRequestURI());
+
       if (authorizationHelper.isAuthDoor(request)) {
          blockExecutorService.executeVoidBlock(request, response, () -> {
             rateLimiterService.fixedWindow(request);

@@ -11,7 +11,8 @@ public interface CommentRepository
    extends
    MongoRepository<CommentDocument, UUID>,
    CustomMongoSpecification<CommentDocument>,
-   CommentAuthorSpecification {
+   CommentAuthorSpecification,
+   CommentPublicSpecification {
 
    Optional<CommentDocument> findByIdAndAuthorId(final UUID commentId, final Long authorId);
 }
