@@ -4,12 +4,12 @@ import com.jame.dev.gymApp.features.comments.domain.model.CommentDocument;
 import com.jame.dev.gymApp.features.comments.domain.repository.CommentQueryRepository;
 import com.jame.dev.gymApp.features.comments.infrastructure.persistence.CommentRepository;
 import lombok.RequiredArgsConstructor;
-import org.bson.types.ObjectId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Repository
@@ -36,5 +36,10 @@ public class CommentQueryMongoRepository implements CommentQueryRepository {
    @Override
    public Optional<CommentDocument> findByIdAndAuthorId(UUID commentId, Long authorId) {
       return commentRepository.findByIdAndAuthorId(commentId, authorId);
+   }
+
+   @Override
+   public Set<CommentDocument> findBestRated(int limit) {
+      return commentRepository.findBestRatedLimited(limit);
    }
 }

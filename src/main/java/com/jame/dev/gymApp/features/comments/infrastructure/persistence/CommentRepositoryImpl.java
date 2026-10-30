@@ -2,22 +2,27 @@ package com.jame.dev.gymApp.features.comments.infrastructure.persistence;
 
 import com.jame.dev.gymApp.domain.repository.CustomMongoSpecification;
 import com.jame.dev.gymApp.features.comments.domain.model.CommentDocument;
+import com.jame.dev.gymApp.features.comments.domain.model.CommentType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 @RequiredArgsConstructor
 public class CommentRepositoryImpl implements
    CustomMongoSpecification<CommentDocument>,
-   CommentAuthorSpecification {
+   CommentAuthorSpecification,
+   CommentPublicSpecification {
    private final MongoTemplate mt;
 
    @Override
@@ -36,6 +41,14 @@ public class CommentRepositoryImpl implements
       applySearchCriteria(query, search);
 
       return toPage(query, pageable);
+   }
+
+   @Override
+   public Set<CommentDocument> findBestRatedLimited(int limit) {
+      final Query qr = new Query(Criteria.where("commentType").is(CommentType.OPINION))
+         .with(Sort.by(Sort.Order.asc("rate")))
+         .limit(limit);
+      return new HashSet<>(mt.find(qr, CommentDocument.class));
    }
 
    private void applySearchCriteria(final Query query, final String search) {

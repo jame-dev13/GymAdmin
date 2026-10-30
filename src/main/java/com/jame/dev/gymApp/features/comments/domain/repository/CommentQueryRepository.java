@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 public interface CommentQueryRepository {
@@ -16,4 +17,5 @@ public interface CommentQueryRepository {
 
    Optional<CommentDocument> findByIdAndAuthorId(final UUID commentId, final Long authorId);
 
+   Set<CommentDocument> findBestRated(final int limit);
 }
