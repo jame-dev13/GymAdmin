@@ -27,4 +27,7 @@ public interface SubscriptionQueryRepository {
    Optional<SubscriptionActor> findSubscriptionActorById(final Long subscriptionId);
 
    List<SubscriptionEndingNotification> findAllSubscriptionEndings();
+
+   Page<SubscriptionEntity> findAllAboutToEnd(final Specification<SubscriptionEntity> specification,
+                                              final Pageable pageable);
 }

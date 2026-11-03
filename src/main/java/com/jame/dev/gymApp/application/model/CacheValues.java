@@ -4,6 +4,7 @@ public class CacheValues {
    public static final String USERS = "users";
    public static final String CUSTOMERS = "customers";
    public static final String SUBSCRIPTIONS = "subscriptions";
+   public static final String SUBSCRIPTIONS_TO_END = "subscriptions:about-to-end";
    public static final String USERS_INACTIVE = "users:inactive";
    public static final String PAYMENTS = "payments";
    public static final String PAYMENT_METRICS = "payments:metrics";

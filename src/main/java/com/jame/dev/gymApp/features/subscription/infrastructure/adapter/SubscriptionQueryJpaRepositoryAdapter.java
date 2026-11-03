@@ -58,4 +58,9 @@ public class SubscriptionQueryJpaRepositoryAdapter implements SubscriptionQueryR
    public List<SubscriptionEndingNotification> findAllSubscriptionEndings() {
       return subscriptionRepository.findSubscriptionEndings();
    }
+
+   @Override
+   public Page<SubscriptionEntity> findAllAboutToEnd(final Specification<SubscriptionEntity> specification, final Pageable pageable) {
+      return subscriptionRepository.findAll(specification, pageable);
+   }
 }
