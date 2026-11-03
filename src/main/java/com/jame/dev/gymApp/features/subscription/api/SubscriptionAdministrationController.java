@@ -1,21 +1,22 @@
 package com.jame.dev.gymApp.features.subscription.api;
 
-import com.jame.dev.gymApp.application.dto.PageDto;
 import com.jame.dev.gymApp.features.subscription.api.request.PaymentRequest;
 import com.jame.dev.gymApp.features.subscription.api.request.SubscriptionRequest;
+import com.jame.dev.gymApp.features.subscription.api.response.SubscriptionAboutToEndResponse;
 import com.jame.dev.gymApp.features.subscription.api.response.SubscriptionResponse;
 import com.jame.dev.gymApp.features.subscription.application.usecases.mutation.*;
 import com.jame.dev.gymApp.features.subscription.application.usecases.query.GetByIdSubscriptionUseCase;
 import com.jame.dev.gymApp.features.subscription.application.usecases.query.GetPageSubscriptionUseCase;
+import com.jame.dev.gymApp.features.subscription.application.usecases.query.GetSubsAboutToEndPageUseCase;
 import com.jame.dev.gymApp.features.subscription.domain.event.CompletedCheckoutEvent;
 import com.jame.dev.gymApp.features.subscription.domain.model.PaymentPhysicMeta;
 import com.jame.dev.gymApp.infrastructure.annotation.Minimum;
 import com.jame.dev.gymApp.infrastructure.annotation.NotNullObject;
+import com.jame.dev.gymApp.infrastructure.page.mapper.PageResponseMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -45,6 +46,19 @@ public class SubscriptionAdministrationController {
    private final SoftDeleteSubscriptionByIdUseCase subscriptionSoftDelete;
    private final CreatePaymentUseCase createPaymentUseCase;
    private final CompletedCheckoutUseCase completedCheckoutUseCase;
+   private final GetSubsAboutToEndPageUseCase subscriptionAboutToEnd;
+   private final PageResponseMapper pageResponseMapper;
+
+   @GetMapping("/about-to-end")
+   public ResponseEntity<Page<SubscriptionAboutToEndResponse>> getSubsABoutToEndPage(
+      @PageableDefault(
+         sort = "id",
+         direction = Sort.Direction.DESC) final Pageable pageable,
+      @RequestParam(required = false, name = "search") final String search
+   ) {
+      final var page = pageResponseMapper.from(subscriptionAboutToEnd.getPage(pageable, search), pageable);
+      return ResponseEntity.ok(page);
+   }
 
    @GetMapping
    public ResponseEntity<Page<SubscriptionResponse>> getPage(
@@ -52,8 +66,7 @@ public class SubscriptionAdministrationController {
          sort = "id",
          direction = Sort.Direction.DESC) final Pageable pageable,
       @RequestParam(required = false, name = "search") final String search) {
-      final PageDto<SubscriptionResponse> pageDto = subscriptionGetPage.getPage(pageable, search);
-      final Page<SubscriptionResponse> page = new PageImpl<>(pageDto.content(), pageable, pageDto.totalElements());
+      final var page = pageResponseMapper.from(subscriptionGetPage.getPage(pageable, search), pageable);
       return ResponseEntity.ok(page);
    }
 

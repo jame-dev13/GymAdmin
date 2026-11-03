@@ -6,15 +6,14 @@ import org.springframework.cache.annotation.Caching;
 
 import java.lang.annotation.*;
 
-import static com.jame.dev.gymApp.application.model.CacheValues.SUBSCRIPTION;
-import static com.jame.dev.gymApp.application.model.CacheValues.SUBSCRIPTIONS;
+import static com.jame.dev.gymApp.application.model.CacheValues.*;
 
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 @Documented
 @Caching(evict = {
-   @CacheEvict(value = {SUBSCRIPTIONS, CacheMetricValues.EARNINGS}, allEntries = true),
+   @CacheEvict(value = {SUBSCRIPTIONS, CacheMetricValues.EARNINGS, SUBSCRIPTIONS_TO_END}, allEntries = true),
    @CacheEvict(value = SUBSCRIPTION, key = "#id")
 })
 public @interface EvictSubsOnUpdate {
