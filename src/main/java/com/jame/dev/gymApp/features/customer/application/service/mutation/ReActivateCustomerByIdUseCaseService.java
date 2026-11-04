@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 
 import static com.jame.dev.gymApp.application.model.CacheValues.CUSTOMERS;
+import static com.jame.dev.gymApp.features.metrics.infrastructure.cache.CacheMetricValues.OVERVIEW;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +25,7 @@ public class ReActivateCustomerByIdUseCaseService implements ReActivateCustomerB
 
     @Override
     @Transactional
-    @CacheEvict(value = CUSTOMERS, allEntries = true)
+    @CacheEvict(value = {CUSTOMERS, OVERVIEW}, allEntries = true)
     public void reActivateById(long id) {
         final CustomerEntity customer = customerQueryRepository.findDeactivatedById(id)
             .orElseThrow(() -> new CustomerNotFoundException("Customer not found, id: " + id));

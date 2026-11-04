@@ -4,4 +4,5 @@ public class CacheMetricValues {
    public static final String EARNINGS = "metrics:earnings";
    public static final String SUBSCRIPTIONS = "metrics:subscriptions";
    public static final String PAYMENTS = "metrics:payments";
+   public static final String OVERVIEW = "metrics:overview";
 }

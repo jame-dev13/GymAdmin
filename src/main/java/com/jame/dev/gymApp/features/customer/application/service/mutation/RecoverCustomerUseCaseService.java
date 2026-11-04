@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.jame.dev.gymApp.application.model.CacheValues.CUSTOMERS;
+import static com.jame.dev.gymApp.features.metrics.infrastructure.cache.CacheMetricValues.OVERVIEW;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +24,7 @@ public class RecoverCustomerUseCaseService implements RecoverCustomerUseCase {
 
    @Override
    @Transactional
-   @CacheEvict(value = CUSTOMERS, allEntries = true)
+   @CacheEvict(value = {CUSTOMERS, OVERVIEW}, allEntries = true)
    public CustomerResponse recover(RecoveryRequest request) {
       final CustomerEntity customerEntity = customerMutationRepository.recoverByUserEmail(request.email());
       return customerFactory.createFromEntity(customerEntity);

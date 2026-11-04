@@ -13,7 +13,7 @@ import static com.jame.dev.gymApp.application.model.CacheValues.*;
 @Inherited
 @Documented
 @Caching(evict = {
-   @CacheEvict(value = {SUBSCRIPTIONS, CacheMetricValues.EARNINGS, SUBSCRIPTIONS_TO_END}, allEntries = true),
+   @CacheEvict(value = {SUBSCRIPTIONS, CacheMetricValues.EARNINGS, CacheMetricValues.OVERVIEW, SUBSCRIPTIONS_TO_END}, allEntries = true),
    @CacheEvict(value = SUBSCRIPTION, key = "#id")
 })
 public @interface EvictSubsOnUpdate {

@@ -2,6 +2,7 @@ package com.jame.dev.gymApp.features.subscription.infrastructure.annotations;
 
 import com.jame.dev.gymApp.application.model.CacheValues;
 import com.jame.dev.gymApp.features.metrics.infrastructure.cache.CacheEvolutionMetricsValues;
+import com.jame.dev.gymApp.features.metrics.infrastructure.cache.CacheMetricValues;
 import com.jame.dev.gymApp.features.notification.infrastructure.cache.SubscriberNotificationCacheValues;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Caching;
@@ -16,7 +17,7 @@ import static com.jame.dev.gymApp.application.model.CacheValues.SUBSCRIPTIONS;
 @Inherited
 @Documented
 @Caching(evict = {
-   @CacheEvict(value = { SUBSCRIPTIONS, CacheEvolutionMetricsValues.DOWNING_SUBSCRIBERS, CacheValues.PAYMENTS, SubscriberNotificationCacheValues.VALUE }, allEntries = true),
+   @CacheEvict(value = { SUBSCRIPTIONS, CacheMetricValues.OVERVIEW, CacheEvolutionMetricsValues.DOWNING_SUBSCRIBERS, CacheValues.PAYMENTS, SubscriberNotificationCacheValues.VALUE }, allEntries = true),
    @CacheEvict(value = SUBSCRIPTION, keyGenerator = "authPrincipalCurrentKeyGen"),
 })
 public @interface EvictCurrentOnUpdateSub {
