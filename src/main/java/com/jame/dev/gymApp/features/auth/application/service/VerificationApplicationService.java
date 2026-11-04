@@ -10,10 +10,12 @@ import com.jame.dev.gymApp.features.auth.domain.exception.AlreadyVerifiedExcepti
 import com.jame.dev.gymApp.features.auth.domain.exception.VerificationNotFoundException;
 import com.jame.dev.gymApp.features.auth.domain.model.VerificationEntity;
 import com.jame.dev.gymApp.features.auth.domain.repository.VerificationRepository;
+import com.jame.dev.gymApp.features.metrics.infrastructure.cache.CacheMetricValues;
 import com.jame.dev.gymApp.features.user.domain.model.UserEntity;
 import com.jame.dev.gymApp.infrastructure.annotation.EmailValid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +34,7 @@ public class VerificationApplicationService implements VerificationService {
 
    @Override
    @Transactional
+   @CacheEvict(value = CacheMetricValues.OVERVIEW, allEntries = true)
    public void verify(VerificationEntity verification, String rawToken) {
       if (verification.isVerified())
          throw new AlreadyVerifiedException("Account has already been verified.");
@@ -48,6 +51,7 @@ public class VerificationApplicationService implements VerificationService {
 
    @Override
    @Transactional
+   @CacheEvict(value = CacheMetricValues.OVERVIEW, allEntries = true)
    public void verify(final VerificationRequest request) {
       final VerificationEntity verification = verificationRepository.findByUser_Email(request.email())
          .orElseThrow(() -> new VerificationNotFoundException("Verification record not found for: " + request.email()));

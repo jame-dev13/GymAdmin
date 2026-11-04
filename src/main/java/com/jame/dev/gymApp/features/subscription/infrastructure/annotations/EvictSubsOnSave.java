@@ -16,7 +16,7 @@ import static com.jame.dev.gymApp.application.model.CacheValues.SUBSCRIPTIONS_TO
 @Documented
 @Caching(evict = {
    @CacheEvict(
-      value = {SUBSCRIPTIONS, CacheMetricValues.SUBSCRIPTIONS, CacheEvolutionMetricsValues.JOINING_SUBSCRIBERS, SUBSCRIPTIONS_TO_END}, allEntries = true),
+      value = {SUBSCRIPTIONS, CacheMetricValues.SUBSCRIPTIONS, CacheMetricValues.OVERVIEW, CacheEvolutionMetricsValues.JOINING_SUBSCRIBERS, SUBSCRIPTIONS_TO_END}, allEntries = true),
 })
 public @interface EvictSubsOnSave {
 }
