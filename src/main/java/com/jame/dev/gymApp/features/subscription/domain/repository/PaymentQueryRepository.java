@@ -4,6 +4,7 @@ import com.jame.dev.gymApp.features.subscription.domain.model.PaymentEntity;
 import com.jame.dev.gymApp.features.subscription.domain.model.PaymentStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.util.Optional;
 
@@ -16,4 +17,6 @@ public interface PaymentQueryRepository {
     Optional<PaymentEntity> findByCustomerEmailAndStatus(final String customerEmail, final PaymentStatus paymentStatus);
 
     Optional<PaymentEntity> findByStripeSessionId(final String stripeSessionId);
+
+    Page<PaymentEntity> finaPage(final Specification<PaymentEntity> spec, final Pageable pageable);
 }
