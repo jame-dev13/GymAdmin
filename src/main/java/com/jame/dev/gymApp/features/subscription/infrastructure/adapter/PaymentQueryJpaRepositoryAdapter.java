@@ -7,6 +7,7 @@ import com.jame.dev.gymApp.features.subscription.infrastructure.persistence.Paym
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -35,4 +36,9 @@ public class PaymentQueryJpaRepositoryAdapter implements PaymentQueryRepository 
     public Optional<PaymentEntity> findByStripeSessionId(String stripeSessionId) {
         return paymentRepository.findByStripeSessionId(stripeSessionId);
     }
+
+   @Override
+   public Page<PaymentEntity> finaPage(Specification<PaymentEntity> spec, Pageable pageable) {
+      return paymentRepository.findAll(spec, pageable);
+   }
 }
