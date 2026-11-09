@@ -22,51 +22,31 @@ public class EvolutionMetricsApplicationService implements EvolutionMetricsServi
 
    @Override
    @Cacheable(
-      value = CacheEvolutionMetricsValues.JOINING_CUSTOMERS,
+      value = CacheEvolutionMetricsValues.CUSTOMER_EVOLUTION,
       key = "#year",
       unless = "#result == null"
    )
-   public CustomerEvolutionResponse getJoiningCustomerEvolution(long year) {
-      return new CustomerEvolutionResponse(evolutionMetricsRepository.calculateJoiningCustomerEvolution(year));
+   public CustomerEvolutionResponse getCustomerEvolution(long year) {
+      return new CustomerEvolutionResponse(evolutionMetricsRepository.calculateCustomerEvolution(year));
    }
 
    @Override
    @Cacheable(
-      value = CacheEvolutionMetricsValues.DOWNING_CUSTOMERS,
+      value = CacheEvolutionMetricsValues.SUBSCRIBER_EVOLUTION,
       key = "#year",
       unless = "#result == null"
    )
-   public CustomerEvolutionResponse getDowningCustomerEvolution(long year) {
-      return new CustomerEvolutionResponse(evolutionMetricsRepository.calculateDowningCustomerEvolution(year));
+   public SubscriberEvolutionResponse getSubscriberEvolution(long year) {
+      return new SubscriberEvolutionResponse(evolutionMetricsRepository.calculateSubscriberEvolution(year));
    }
 
    @Override
    @Cacheable(
-      value = CacheEvolutionMetricsValues.JOINING_SUBSCRIBERS,
-      key = "#year",
-      unless = "#result == null"
-   )
-   public SubscriberEvolutionResponse getJoiningSubscriberEvolution(long year) {
-      return new SubscriberEvolutionResponse(evolutionMetricsRepository.calculateJoiningSubscriberEvolution(year));
-   }
-
-   @Override
-   @Cacheable(
-      value = CacheEvolutionMetricsValues.DOWNING_SUBSCRIBERS,
-      key = "#year",
-      unless = "#result == null"
-   )
-   public SubscriberEvolutionResponse getDowningSubscribersBeforeEndTime(long year) {
-      return new SubscriberEvolutionResponse(evolutionMetricsRepository.calculateDowningSubscribersBeforeEndTime(year));
-   }
-
-   @Override
-   @Cacheable(
-      value = CacheEvolutionMetricsValues.BILLINGS,
+      value = CacheEvolutionMetricsValues.BILLING_EVOLUTION,
       key = "#year",
       unless = "#result == null"
    )
    public BillingEvolutionResponse getBillingEvolution(long year) {
-      return new BillingEvolutionResponse(evolutionMetricsRepository.calculateBillingEvolution(year));
+      return new BillingEvolutionResponse(evolutionMetricsRepository.calculateBillingEvolutionInsights(year));
    }
 }

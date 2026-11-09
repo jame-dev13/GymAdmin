@@ -5,13 +5,9 @@ import com.jame.dev.gymApp.features.metrics.api.response.CustomerEvolutionRespon
 import com.jame.dev.gymApp.features.metrics.api.response.SubscriberEvolutionResponse;
 
 public interface EvolutionMetricsService {
-   CustomerEvolutionResponse getJoiningCustomerEvolution(final long year);
+   CustomerEvolutionResponse getCustomerEvolution(final long year);
 
-   CustomerEvolutionResponse getDowningCustomerEvolution(final long year);
-
-   SubscriberEvolutionResponse getJoiningSubscriberEvolution(final long year);
-
-   SubscriberEvolutionResponse getDowningSubscribersBeforeEndTime(final long year);
+   SubscriberEvolutionResponse getSubscriberEvolution(final long year);
 
    BillingEvolutionResponse getBillingEvolution(final long year);
 }
