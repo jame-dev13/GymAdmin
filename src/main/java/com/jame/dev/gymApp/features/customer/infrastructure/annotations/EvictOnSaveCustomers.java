@@ -7,7 +7,7 @@ import org.springframework.cache.annotation.Caching;
 import java.lang.annotation.*;
 
 import static com.jame.dev.gymApp.application.model.CacheValues.CUSTOMERS;
-import static com.jame.dev.gymApp.features.metrics.infrastructure.cache.CacheEvolutionMetricsValues.JOINING_CUSTOMERS;
+import static com.jame.dev.gymApp.features.metrics.infrastructure.cache.CacheEvolutionMetricsValues.CUSTOMER_EVOLUTION;
 import static com.jame.dev.gymApp.features.metrics.infrastructure.cache.CacheMetricValues.OVERVIEW;
 
 @Target({ElementType.METHOD})
@@ -15,7 +15,7 @@ import static com.jame.dev.gymApp.features.metrics.infrastructure.cache.CacheMet
 @Inherited
 @Documented
 @Caching(
-   evict = @CacheEvict(value = {CUSTOMERS, JOINING_CUSTOMERS, OVERVIEW}, allEntries = true)
+   evict = @CacheEvict(value = {CUSTOMERS, CUSTOMER_EVOLUTION, OVERVIEW}, allEntries = true)
 )
 public @interface EvictOnSaveCustomers {
 }

@@ -14,7 +14,7 @@ import static com.jame.dev.gymApp.application.model.CacheValues.*;
 @Inherited
 @Documented
 @Caching(evict = {
-   @CacheEvict(value = { SUBSCRIPTIONS, CacheMetricValues.OVERVIEW, CacheEvolutionMetricsValues.DOWNING_SUBSCRIBERS, SUBSCRIPTIONS_TO_END }, allEntries = true),
+   @CacheEvict(value = { SUBSCRIPTIONS, CacheMetricValues.OVERVIEW, CacheEvolutionMetricsValues.SUBSCRIBER_EVOLUTION, SUBSCRIPTIONS_TO_END }, allEntries = true),
    @CacheEvict(value = SUBSCRIPTION, key = "#id")
 })
 public @interface EvictSubsOnDrop {

@@ -21,28 +21,18 @@ public class EvolutionMetricsController {
 
    private final EvolutionMetricsService evolutionMetricsService;
 
+   @GetMapping("/{year}/customers")
+   public ResponseEntity<CustomerEvolutionResponse> getCustomersEvolution(final @PathVariable int year) {
+      return ResponseEntity.ok(evolutionMetricsService.getCustomerEvolution(year));
+   }
+
+   @GetMapping("/{year}/subscribers")
+   public ResponseEntity<SubscriberEvolutionResponse> getSubscribersEvolution(final @PathVariable int year) {
+      return ResponseEntity.ok(evolutionMetricsService.getSubscriberEvolution(year));
+   }
+
    @GetMapping("/{year}/billings")
    public ResponseEntity<BillingEvolutionResponse> getBillingEvolution(final @PathVariable int year) {
       return ResponseEntity.ok(evolutionMetricsService.getBillingEvolution(year));
-   }
-
-   @GetMapping("/{year}/customers/downs")
-   public ResponseEntity<CustomerEvolutionResponse> getDowningCustomersEvolution(final @PathVariable int year) {
-      return ResponseEntity.ok(evolutionMetricsService.getDowningCustomerEvolution(year));
-   }
-
-   @GetMapping("/{year}/customers/joins")
-   public ResponseEntity<CustomerEvolutionResponse> getJoiningCustomersEvolution(final @PathVariable int year) {
-      return ResponseEntity.ok(evolutionMetricsService.getJoiningCustomerEvolution(year));
-   }
-
-   @GetMapping("/{year}/subscribers/joins")
-   public ResponseEntity<SubscriberEvolutionResponse> getJoiningSubscribersEvolution(final @PathVariable int year) {
-      return ResponseEntity.ok(evolutionMetricsService.getJoiningSubscriberEvolution(year));
-   }
-
-   @GetMapping("/{year}/subscribers/downs")
-   public ResponseEntity<SubscriberEvolutionResponse> getDowningSubscribersBeforeReachEndDate(final @PathVariable int year) {
-      return ResponseEntity.ok(evolutionMetricsService.getDowningSubscribersBeforeEndTime(year));
    }
 }

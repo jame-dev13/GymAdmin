@@ -6,7 +6,7 @@ import org.springframework.cache.annotation.Caching;
 import java.lang.annotation.*;
 
 import static com.jame.dev.gymApp.application.model.CacheValues.*;
-import static com.jame.dev.gymApp.features.metrics.infrastructure.cache.CacheEvolutionMetricsValues.BILLINGS;
+import static com.jame.dev.gymApp.features.metrics.infrastructure.cache.CacheEvolutionMetricsValues.BILLING_EVOLUTION;
 import static com.jame.dev.gymApp.features.metrics.infrastructure.cache.CacheMetricValues.EARNINGS;
 import static com.jame.dev.gymApp.features.metrics.infrastructure.cache.CacheMetricValues.OVERVIEW;
 
@@ -17,7 +17,7 @@ import static com.jame.dev.gymApp.features.metrics.infrastructure.cache.CacheMet
 @Caching(evict = {
    @CacheEvict(value = {
       SUBSCRIPTIONS, SUBSCRIPTION, PAYMENTS,
-      PAYMENT_METRICS, BILLINGS, EARNINGS, OVERVIEW
+      PAYMENT_METRICS, BILLING_EVOLUTION, EARNINGS, OVERVIEW
    }, allEntries = true)
 })
 public @interface EvictOnCompleteCheckout {
