@@ -22,7 +22,19 @@ public class BackupQueryMongoRepositoryAdapter implements BackupQueryRepository 
    }
 
    @Override
+   public Page<BackupDocument> findAllInactive(Pageable pageable, String search) {
+      return backupRepository.searchInactive(pageable, search);
+   }
+
+   @Override
    public Optional<BackupDocument> findById(UUID uuid) {
-      return backupRepository.findById(uuid);
+      return backupRepository.findById(uuid)
+         .filter(BackupDocument::isActive);
+   }
+
+   @Override
+   public Optional<BackupDocument> findInactiveById(UUID uuid) {
+      return backupRepository.findById(uuid)
+         .filter(document -> !document.isActive());
    }
 }

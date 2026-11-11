@@ -10,5 +10,9 @@ import java.util.UUID;
 public interface BackupQueryRepository {
    Page<BackupDocument> findAll(final Pageable pageable, final String search);
 
+   Page<BackupDocument> findAllInactive(final Pageable pageable, final String search);
+
    Optional<BackupDocument> findById(final UUID uuid);
+
+   Optional<BackupDocument> findInactiveById(final UUID uuid);
 }
