@@ -35,10 +35,13 @@ public class BackupController {
 
    private final CreateDatabaseBackupUseCase createDatabaseBackupUseCase;
    private final GetBackupPageUseCase getBackupPageUseCase;
+   private final GetInactiveBackupPageUseCase getInactiveBackupPageUseCase;
    private final GetBackupByIdUseCase getBackupByIdUseCase;
    private final RestoreBackupDatabaseUseCase restoreBackupDatabaseUseCase;
    private final GetBackupDumpFileUseCase getBackupDumpFileUseCase;
    private final DeleteBackupByIdUseCase deleteBackupByIdUseCase;
+   private final HardDeleteBackupByIdUseCase hardDeleteBackupByIdUseCase;
+   private final RecoverBackupByIdUseCase recoverBackupByIdUseCase;
    private final BackupRateLimiter backupRateLimiter;
 
    @GetMapping
@@ -47,6 +50,16 @@ public class BackupController {
       @RequestParam(value = "search", required = false) final String search
    ) {
       final PageDto<BackupResponse> pageDto = getBackupPageUseCase.getBackupPage(pageable, search);
+      final Page<BackupResponse> page = new PageImpl<>(pageDto.content(), pageable, pageDto.totalElements());
+      return ResponseEntity.ok(page);
+   }
+
+   @GetMapping("/inactive")
+   public ResponseEntity<Page<BackupResponse>> getInactiveBackupPage(
+      @PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) final Pageable pageable,
+      @RequestParam(value = "search", required = false) final String search
+   ) {
+      final PageDto<BackupResponse> pageDto = getInactiveBackupPageUseCase.getInactiveBackupPage(pageable, search);
       final Page<BackupResponse> page = new PageImpl<>(pageDto.content(), pageable, pageDto.totalElements());
       return ResponseEntity.ok(page);
    }
@@ -101,5 +114,21 @@ public class BackupController {
    ) {
       deleteBackupByIdUseCase.deleteById(uuid);
       return ResponseEntity.noContent().build();
+   }
+
+   @DeleteMapping("/{id}/hard")
+   public ResponseEntity<Void> hardDeleteBackup(
+      @PathVariable("id") final UUID uuid
+   ) {
+      hardDeleteBackupByIdUseCase.hardDeleteById(uuid);
+      return ResponseEntity.noContent().build();
+   }
+
+   @PatchMapping("/{id}/recover")
+   public ResponseEntity<Void> recoverBackup(
+      @PathVariable("id") final UUID uuid
+   ) {
+      recoverBackupByIdUseCase.recoverById(uuid);
+      return ResponseEntity.ok().build();
    }
 }

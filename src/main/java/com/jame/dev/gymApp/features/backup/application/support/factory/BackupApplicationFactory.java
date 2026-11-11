@@ -49,6 +49,7 @@ public class BackupApplicationFactory implements BackupFactory {
          .size(file.exists() ? file.length() : -1)
          .checksum(hashExecutor.hash(fileName))
          .backupStatus(BackupStatus.PROGRESS)
+         .active(true)
          .createdBy(identityExtractor.extract(
             SecurityContextHolder
                .getContext()

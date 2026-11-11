@@ -10,7 +10,10 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Caching(
-   evict = @CacheEvict(value = CacheBackupValues.CACHE_BACKUP, allEntries = true)
+   evict = {
+      @CacheEvict(value = CacheBackupValues.CACHE_BACKUP, allEntries = true),
+      @CacheEvict(value = CacheBackupValues.CACHE_BACKUP_INACTIVE, allEntries = true)
+   }
 )
 public @interface EvictBackups {
 }

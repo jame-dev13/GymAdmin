@@ -8,4 +8,8 @@ public interface BackupMutationRepository {
    BackupDocument save(BackupDocument backupDocument);
 
    void deleteBackupById(UUID uuid);
+
+   void hardDeleteBackupById(UUID uuid);
+
+   void recoverBackupById(UUID uuid);
 }

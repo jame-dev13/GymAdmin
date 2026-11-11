@@ -13,6 +13,9 @@ import com.jame.dev.gymApp.features.backup.application.usecases.DeleteBackupById
 import com.jame.dev.gymApp.features.backup.application.usecases.GetBackupByIdUseCase;
 import com.jame.dev.gymApp.features.backup.application.usecases.GetBackupDumpFileUseCase;
 import com.jame.dev.gymApp.features.backup.application.usecases.GetBackupPageUseCase;
+import com.jame.dev.gymApp.features.backup.application.usecases.GetInactiveBackupPageUseCase;
+import com.jame.dev.gymApp.features.backup.application.usecases.HardDeleteBackupByIdUseCase;
+import com.jame.dev.gymApp.features.backup.application.usecases.RecoverBackupByIdUseCase;
 import com.jame.dev.gymApp.features.backup.application.usecases.RestoreBackupDatabaseUseCase;
 import com.jame.dev.gymApp.features.backup.domain.model.BackupStatus;
 import com.jame.dev.gymApp.features.backup.infrastructure.rate_limiting.BackupRateLimiter;
@@ -97,6 +100,15 @@ class BackupControllerTest {
 
    @MockitoBean
    private DeleteBackupByIdUseCase deleteBackupByIdUseCase;
+
+   @MockitoBean
+   private GetInactiveBackupPageUseCase getInactiveBackupPageUseCase;
+
+   @MockitoBean
+   private HardDeleteBackupByIdUseCase hardDeleteBackupByIdUseCase;
+
+   @MockitoBean
+   private RecoverBackupByIdUseCase recoverBackupByIdUseCase;
 
    @MockitoBean
    private BackupRateLimiter backupRateLimiter;

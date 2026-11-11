@@ -7,6 +7,7 @@ import com.jame.dev.gymApp.features.backup.domain.model.BackupStatus;
 import com.jame.dev.gymApp.features.backup.domain.repository.BackupMutationRepository;
 import com.jame.dev.gymApp.features.backup.domain.repository.BackupQueryRepository;
 import com.jame.dev.gymApp.features.backup.domain.repository.BackupRestoreExecutor;
+import com.jame.dev.gymApp.features.backup.infrastructure.annotations.EvictBackups;
 import com.jame.dev.gymApp.features.backup.infrastructure.listener.BackupFailureListener;
 import com.jame.dev.gymApp.features.backup.infrastructure.listener.BackupSuccessListener;
 import com.jame.dev.gymApp.features.backup.infrastructure.path.PathService;
@@ -29,6 +30,7 @@ public class RestoreBackupDatabaseUseCaseService implements RestoreBackupDatabas
    private final CacheEvictionManager cacheEvictionManager;
 
    @Override
+   @EvictBackups
    public void restore(final UUID backupId) {
       final var backupDocument = backupQueryRepository.findById(backupId)
          .orElseThrow(() -> new NotFoundException("Backup Document not found for: " + backupId));

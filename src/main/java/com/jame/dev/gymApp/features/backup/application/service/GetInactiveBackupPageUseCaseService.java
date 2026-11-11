@@ -1,0 +1,32 @@
+package com.jame.dev.gymApp.features.backup.application.service;
+
+import com.jame.dev.gymApp.application.dto.PageDto;
+import com.jame.dev.gymApp.features.backup.api.response.BackupResponse;
+import com.jame.dev.gymApp.features.backup.application.support.factory.BackupFactory;
+import com.jame.dev.gymApp.features.backup.application.usecases.GetInactiveBackupPageUseCase;
+import com.jame.dev.gymApp.features.backup.domain.repository.BackupQueryRepository;
+import com.jame.dev.gymApp.features.backup.infrastructure.cache.CacheBackupValues;
+import com.jame.dev.gymApp.infrastructure.sort.SortPropertyResolver;
+import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class GetInactiveBackupPageUseCaseService implements GetInactiveBackupPageUseCase {
+   private final BackupFactory backupFactory;
+   private final BackupQueryRepository backupQueryRepository;
+   private final SortPropertyResolver backupSortPropertyResolver;
+
+   @Override
+   @Cacheable(
+      value = CacheBackupValues.CACHE_BACKUP_INACTIVE,
+      keyGenerator = "pageKeyGenerator",
+      unless = "#result == null || #result.content.isEmpty()"
+   )
+   public PageDto<BackupResponse> getInactiveBackupPage(final Pageable pageable, final String search) {
+      final Pageable wrapped = backupSortPropertyResolver.resolve(pageable);
+      return backupFactory.createPageFrom(backupQueryRepository.findAllInactive(wrapped, search));
+   }
+}

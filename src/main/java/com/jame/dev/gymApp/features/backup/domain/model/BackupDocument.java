@@ -42,6 +42,10 @@ public class BackupDocument {
    @Field("backupStatus")
    private BackupStatus backupStatus;
 
+   @Field("active")
+   @Builder.Default
+   private boolean active = true;
+
    @Field("createdBy")
    @Setter(AccessLevel.NONE)
    private String createdBy;
