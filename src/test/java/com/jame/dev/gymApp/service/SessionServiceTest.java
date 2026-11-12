@@ -1,37 +1,33 @@
 package com.jame.dev.gymApp.service;
 
-import com.jame.dev.gymApp.features.auth.domain.exception.AuthenticationNullException;
-import com.jame.dev.gymApp.features.auth.domain.exception.ExtractClaimException;
-import com.jame.dev.gymApp.features.auth.domain.exception.IllegalSubjectAuthenticatedException;
-import com.jame.dev.gymApp.features.auth.application.support.factory.AuthResponsesFactory;
-import com.jame.dev.gymApp.features.auth.application.contract.JwtService;
 import com.jame.dev.gymApp.features.auth.api.response.SessionResponse;
-import com.jame.dev.gymApp.features.auth.infrastructure.security.identity.IdentityExtractorService;
+import com.jame.dev.gymApp.features.auth.application.model.AuthProvider;
 import com.jame.dev.gymApp.features.auth.application.service.SessionApplicationService;
-import com.jame.dev.gymApp.features.user.domain.model.Role;
+import com.jame.dev.gymApp.features.auth.application.support.factory.AuthResponsesFactory;
+import com.jame.dev.gymApp.features.auth.domain.model.CustomOAuth2User;
+import com.jame.dev.gymApp.features.auth.domain.model.UserPrincipal;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import java.util.Optional;
-import java.util.Set;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class SessionServiceTest {
+   private static final Collection<GrantedAuthority> AUTHORITIES =
+      List.of(new SimpleGrantedAuthority("ROLE_USER"));
 
-   @Mock
-   private IdentityExtractorService identityExtractorService;
-   @Mock
-   private JwtService jwtService;
    @Mock
    private AuthResponsesFactory authResponsesFactory;
 
@@ -39,67 +35,55 @@ public class SessionServiceTest {
    private SessionApplicationService service;
 
    @Test
-   @DisplayName("Should get session")
+   @DisplayName("Should get session from a UserPrincipal object.")
    void shouldGetSessionDto() {
-      Set<Role> roles = Set.of(Role.USER);
-      Authentication authentication = mock(Authentication.class);
-      String access = "ACCESS";
-      String subject = "subject";
+      final SessionResponse response = mock(SessionResponse.class);
+      final UserPrincipal principal = UserPrincipal.builder()
+         .id(1L)
+         .username("john.doe")
+         .password("encoded")
+         .authorities(AUTHORITIES)
+         .build();
 
-      when(jwtService.extractSubject(anyString())).thenReturn(Optional.of(subject));
-      when(identityExtractorService.extract(authentication)).thenReturn(subject);
+      given(authResponsesFactory.createSessionFrom(principal.username(), principal.getAuthorities()))
+         .willReturn(response);
 
-      when(authResponsesFactory.createSessionFrom(anyString(), any()))
-              .thenReturn(new SessionResponse(subject, roles, true));
+      final var session = assertDoesNotThrow(() -> service.getSession(principal), "Shouldn't have throws exception.");
 
-      var result = assertDoesNotThrow(() -> service.getSession(access, authentication));
-      assertNotNull(result);
+      verify(authResponsesFactory).createSessionFrom(principal.username(), principal.getAuthorities());
+      verifyNoMoreInteractions(authResponsesFactory);
 
-      verify(jwtService, atLeastOnce()).extractSubject(anyString());
-      verify(identityExtractorService, atLeastOnce()).extract(authentication);
-      verify(authResponsesFactory, atLeastOnce()).createSessionFrom(anyString(), any());
-      verifyNoMoreInteractions(jwtService, identityExtractorService, authResponsesFactory);
+      assertSame(response, session, "Session should be the one returned by the factory.");
    }
 
    @Test
-   @DisplayName("Should throws exception cause null arguments.")
+   @DisplayName("Should get session from a CustomOauth2User object.")
+   void getSession_from_CustomOauth2User() {
+      final SessionResponse response = mock(SessionResponse.class);
+      final CustomOAuth2User principal = CustomOAuth2User.builder()
+         .id(1L)
+         .username("john.doe")
+         .provider(AuthProvider.GOOGLE)
+         .attributes(Map.of())
+         .authorities(AUTHORITIES)
+         .build();
+
+      given(authResponsesFactory.createSessionFrom(principal.username(), principal.getAuthorities()))
+         .willReturn(response);
+
+      final var session = assertDoesNotThrow(() -> service.getSession(principal), "Shouldn't have throws exception.");
+
+      verify(authResponsesFactory).createSessionFrom(principal.username(), principal.getAuthorities());
+      verifyNoMoreInteractions(authResponsesFactory);
+
+      assertSame(response, session, "Session should be the one returned by the factory.");
+   }
+
+   @Test
+   @DisplayName("Should throws exception when AuthPrincipal's null.")
    void shouldThrowsAuthenticationNullException() {
-      assertThrowsExactly(AuthenticationNullException.class,
-              () -> service.getSession(null, null));
-      verifyNoInteractions(identityExtractorService, authResponsesFactory,  jwtService);
-   }
+      assertThrowsExactly(NullPointerException.class, () -> service.getSession(null), "Should throws exactly NPE.");
 
-   @Test
-   @DisplayName("Should be able to not find the subject claim.")
-   void shouldThrowsClamsNotFoundException() {
-      Authentication authentication = mock(Authentication.class);
-      String access = "NoAccess";
-      when(jwtService.extractSubject(anyString())).thenReturn(Optional.empty());
-      assertThrowsExactly(ExtractClaimException.class,
-              () -> service.getSession(access, authentication));
-
-      verify(jwtService, atLeastOnce()).extractSubject(anyString());
-      verifyNoInteractions(authResponsesFactory, identityExtractorService);
-      verifyNoMoreInteractions(jwtService);
-   }
-
-   @Test
-   @DisplayName("Should throws Exception whether the subjects are not equals.")
-   void shouldThrowsIllegalSubjectAuthenticatedException() {
-      Authentication authentication = mock(Authentication.class);
-      String access = "ACCESS";
-      String subjectAccess = "Access Subject";
-      String subjectExpected = "Access Expected";
-
-      when(jwtService.extractSubject(anyString())).thenReturn(Optional.of(subjectAccess));
-      when(identityExtractorService.extract(authentication)).thenReturn(subjectExpected);
-
-      assertThrowsExactly(IllegalSubjectAuthenticatedException.class, () -> service.getSession(access, authentication));
-
-      verify(jwtService, atLeastOnce()).extractSubject(anyString());
-      verify(identityExtractorService, atLeastOnce()).extract(authentication);
-
-      verifyNoMoreInteractions(jwtService, identityExtractorService);
       verifyNoInteractions(authResponsesFactory);
    }
 }
