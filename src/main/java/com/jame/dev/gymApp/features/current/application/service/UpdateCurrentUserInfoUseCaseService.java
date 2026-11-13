@@ -6,6 +6,7 @@ import com.jame.dev.gymApp.features.auth.domain.model.AuthPrincipal;
 import com.jame.dev.gymApp.features.current.application.model.CurrentUserModel;
 import com.jame.dev.gymApp.features.current.application.request.CurrentUserUpdateRequest;
 import com.jame.dev.gymApp.features.current.application.usecase.UpdateCurrentUserInfoUseCase;
+import com.jame.dev.gymApp.features.current.infrastructure.annotation.MakeSilentlyAuthentication;
 import com.jame.dev.gymApp.features.current.infrastructure.cache.EvictCurrentOnMutation;
 import com.jame.dev.gymApp.features.user.domain.model.UserEntity;
 import com.jame.dev.gymApp.features.user.domain.repository.UserMutationRepository;
@@ -32,6 +33,7 @@ public class UpdateCurrentUserInfoUseCaseService implements UpdateCurrentUserInf
    @Override
    @Transactional
    @EvictCurrentOnMutation
+   @MakeSilentlyAuthentication
    public CurrentUserModel updateCurrentUserInfo(
       AuthPrincipal principal,
       CurrentUserUpdateRequest currentUserUpdateRequest,
@@ -47,13 +49,14 @@ public class UpdateCurrentUserInfoUseCaseService implements UpdateCurrentUserInf
 
       userEntity.setName(currentUserUpdateRequest.name());
       userEntity.setEmail(currentUserUpdateRequest.email());
-      if (currentUserUpdateRequest.password() != null && !currentUserUpdateRequest.password().isBlank())
+      final boolean passwordChanged = currentUserUpdateRequest.password() != null && !currentUserUpdateRequest.password().isBlank();
+      if (passwordChanged)
          userEntity.setPassword(passwordEncoder.encode(currentUserUpdateRequest.password()));
 
       final UserEntity user = userMutationRepository.save(userEntity);
 
       // The aspect needs the raw password to silently re-authenticate the user;
       // the entity only holds the encoded one.
-      return new CurrentUserModel(user.getName(), user.getEmail(), currentUserUpdateRequest.password());
+      return new CurrentUserModel(user.getName(), user.getEmail(), emailChanged || passwordChanged);
    }
 }
