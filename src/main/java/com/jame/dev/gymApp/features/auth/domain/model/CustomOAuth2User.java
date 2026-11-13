@@ -12,6 +12,7 @@ import java.util.Map;
 @Builder
 public record CustomOAuth2User(
    Long id,
+   String name,
    String username,
    AuthProvider provider,
    Map<String, Object> attributes,

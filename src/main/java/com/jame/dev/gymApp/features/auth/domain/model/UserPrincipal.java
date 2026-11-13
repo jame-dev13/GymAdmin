@@ -11,6 +11,7 @@ import java.util.Collection;
 @Builder
 public record UserPrincipal(
    Long id,
+   String name,
    String username,
    String password,
    Collection<? extends GrantedAuthority> authorities

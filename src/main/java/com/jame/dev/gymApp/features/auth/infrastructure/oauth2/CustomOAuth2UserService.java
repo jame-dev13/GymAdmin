@@ -32,6 +32,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
       log.debug("Returning CustomOAuth2User.");
       return CustomOAuth2User.builder()
          .id(user.id())
+         .name(user.name())
          .username(user.email())
          .provider(user.authProvider())
          .attributes(oAuth2User.getAttributes())
