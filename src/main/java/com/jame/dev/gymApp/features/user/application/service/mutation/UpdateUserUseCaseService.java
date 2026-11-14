@@ -41,7 +41,7 @@ public class UpdateUserUseCaseService implements UpdateUserUseCase {
       result = "#result"
    )
    public UserResponse update(long id, UserUpdateRequest request) {
-      if (!userValidationRepository.existsByIdAndEmail(id, request.email()))
+      if (userValidationRepository.existsByEmail(request.email()))
          throw new UnrelatedDataAccessException("Trying to edit unrelated user data for: " + request.email());
 
       final UserEntity userEntity = userQueryRepository.findById(id)
