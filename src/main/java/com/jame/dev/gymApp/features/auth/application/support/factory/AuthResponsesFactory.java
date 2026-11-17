@@ -5,15 +5,17 @@ import com.jame.dev.gymApp.features.auth.api.response.SessionResponse;
 import com.jame.dev.gymApp.features.auth.api.response.SignInResponse;
 import com.jame.dev.gymApp.features.auth.application.contract.JwtService;
 import com.jame.dev.gymApp.features.auth.application.model.JwtValidationArgument;
+import com.jame.dev.gymApp.features.auth.application.model.LoginUserType;
 import com.jame.dev.gymApp.features.auth.application.support.helper.CookieHelper;
 import com.jame.dev.gymApp.features.auth.domain.exception.ExtractClaimException;
 import com.jame.dev.gymApp.features.auth.domain.exception.InvalidJwtException;
 import com.jame.dev.gymApp.features.auth.domain.model.AuthPrincipal;
 import com.jame.dev.gymApp.features.auth.domain.model.UserPrincipal;
+import com.jame.dev.gymApp.features.customer.domain.repository.CustomerValidationRepository;
 import com.jame.dev.gymApp.features.user.application.support.mapper.RoleMapper;
 import com.jame.dev.gymApp.features.user.domain.model.Role;
 import com.jame.dev.gymApp.features.user.domain.model.UserEntity;
-import com.jame.dev.gymApp.features.user.infrastructure.persistence.UserRepository;
+import com.jame.dev.gymApp.features.user.domain.repository.UserQueryRepository;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseCookie;
@@ -30,7 +32,8 @@ public class AuthResponsesFactory {
    private final JwtService jwtService;
    private final CookieHelper cookieHelper;
    private final RoleMapper roleMapper;
-   private final UserRepository userRepository;
+   private final UserQueryRepository userRepository;
+   private final CustomerValidationRepository customerValidationRepository;
 
    public CookieResponse createRefreshCookieResponseFrom(@NonNull final String token) {
       final long userId = jwtService.extractUserId(token)
@@ -54,13 +57,33 @@ public class AuthResponsesFactory {
    }
 
    public SignInResponse createSigInResponseFrom(final @NonNull AuthPrincipal principal) {
-      if(!(principal instanceof UserPrincipal user))
+      if (!(principal instanceof UserPrincipal user))
          throw new IllegalArgumentException("Type of Principal not allowed.");
-      final boolean isUser = user.getAuthorities()
+
+      final boolean isAdmin = user.getAuthorities()
          .stream()
          .map(GrantedAuthority::getAuthority)
-         .noneMatch(ga -> Objects.equals(ga, "ROLE_ADMIN"));
-      return buildSignInOkDto(isUser, user);
+         .anyMatch(ga -> Objects.equals(ga, "ROLE_ADMIN"));
+
+      final CookieResponse cookies = generateCookieResponseFrom(user.id(), user.username());
+
+      if (isAdmin) {
+         return SignInResponse.builder()
+            .type(LoginUserType.ADMINISTRATIVE)
+            .email(user.username())
+            .access(cookies.access())
+            .refresh(cookies.refresh())
+            .build();
+      }
+
+      final boolean isCustomer = customerValidationRepository.existsById(user.id());
+
+      return SignInResponse.builder()
+         .type(isCustomer ? LoginUserType.CUSTOMER : LoginUserType.USER)
+         .email(user.username())
+         .access(cookies.access())
+         .refresh(cookies.refresh())
+         .build();
    }
 
    public SessionResponse createSessionFrom(String username, Collection<? extends GrantedAuthority> authorities) {
@@ -69,17 +92,5 @@ public class AuthResponsesFactory {
          .map(UserEntity::getCustomerEntity)
          .isPresent();
       return new SessionResponse(username, roles, isCustomer);
-   }
-
-   @NonNull
-   private SignInResponse buildSignInOkDto(
-      final boolean isUser, final AuthPrincipal userPrincipal) {
-      final CookieResponse cookies = generateCookieResponseFrom(userPrincipal.id(), userPrincipal.username());
-      return SignInResponse.builder()
-         .isUser(isUser)
-         .email(userPrincipal.username())
-         .access(cookies.access())
-         .refresh(cookies.refresh())
-         .build();
    }
 }
