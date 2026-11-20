@@ -4,6 +4,7 @@ import com.jame.dev.gymApp.features.subscription.domain.model.PaymentEntity;
 import com.jame.dev.gymApp.features.subscription.domain.model.PaymentStatus;
 import com.jame.dev.gymApp.features.subscription.domain.repository.PaymentQueryRepository;
 import com.jame.dev.gymApp.features.subscription.infrastructure.persistence.PaymentRepository;
+import com.jame.dev.gymApp.features.subscription.infrastructure.specification.PaymentSpecifications;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,17 +16,20 @@ import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 public class PaymentQueryJpaRepositoryAdapter implements PaymentQueryRepository {
-    private final PaymentRepository paymentRepository;
+   private final PaymentRepository paymentRepository;
 
    @Override
-   public Page<PaymentEntity> findPaymentPage(String userEmail, String search, Pageable pageable) {
-      return paymentRepository.findAll(userEmail, search, pageable);
+   public Page<PaymentEntity> findPaymentPage(long customerId, String search, Pageable pageable) {
+      final Specification<PaymentEntity> specification = PaymentSpecifications
+         .hasSearchIn(search)
+         .and(PaymentSpecifications.belongsToCustomer(customerId));
+      return paymentRepository.findAll(specification, pageable);
    }
 
    @Override
-    public Optional<PaymentEntity> findById(long id) {
-        return paymentRepository.findById(id);
-    }
+   public Optional<PaymentEntity> findById(long id) {
+      return paymentRepository.findById(id);
+   }
 
    @Override
    public Optional<PaymentEntity> findByCustomerEmailAndStatus(String customerEmail, PaymentStatus paymentStatus) {
@@ -33,9 +37,14 @@ public class PaymentQueryJpaRepositoryAdapter implements PaymentQueryRepository 
    }
 
    @Override
-    public Optional<PaymentEntity> findByStripeSessionId(String stripeSessionId) {
-        return paymentRepository.findByStripeSessionId(stripeSessionId);
-    }
+   public Optional<PaymentEntity> findByCustomerIdAndStatus(Long customerId, PaymentStatus paymentStatus) {
+      return paymentRepository.findByCustomerIdAndStatus(customerId, paymentStatus);
+   }
+
+   @Override
+   public Optional<PaymentEntity> findByStripeSessionId(String stripeSessionId) {
+      return paymentRepository.findByStripeSessionId(stripeSessionId);
+   }
 
    @Override
    public Page<PaymentEntity> finaPage(Specification<PaymentEntity> spec, Pageable pageable) {

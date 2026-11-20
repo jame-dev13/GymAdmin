@@ -1,8 +1,11 @@
 package com.jame.dev.gymApp.features.subscription.infrastructure.specification;
 
+import com.jame.dev.gymApp.features.customer.domain.model.CustomerEntity;
 import com.jame.dev.gymApp.features.subscription.domain.model.PaymentEntity;
 import com.jame.dev.gymApp.features.subscription.domain.model.PaymentMethod;
 import com.jame.dev.gymApp.features.subscription.domain.model.PaymentStatus;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -39,6 +42,13 @@ public interface PaymentSpecifications {
          }
 
          return cb.or(predicates.toArray(new Predicate[0]));
+      };
+   }
+
+   static Specification<PaymentEntity> belongsToCustomer(final long customerId) {
+      return (root, query, cb) -> {
+         final Join<PaymentEntity, CustomerEntity> customerJoin = root.join("customer", JoinType.LEFT);
+         return cb.equal(customerJoin.get("id").as(Long.class), customerId);
       };
    }
 }

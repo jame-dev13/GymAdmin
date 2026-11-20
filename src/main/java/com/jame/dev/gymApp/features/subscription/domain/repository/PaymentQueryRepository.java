@@ -10,11 +10,13 @@ import java.util.Optional;
 
 public interface PaymentQueryRepository {
 
-   Page<PaymentEntity> findPaymentPage(final String userEmail, final String search, final Pageable pageable);
+   Page<PaymentEntity> findPaymentPage(final long customerId, final String search, final Pageable pageable);
 
     Optional<PaymentEntity> findById(final long id);
 
     Optional<PaymentEntity> findByCustomerEmailAndStatus(final String customerEmail, final PaymentStatus paymentStatus);
+
+    Optional<PaymentEntity> findByCustomerIdAndStatus(final Long customerId, final PaymentStatus paymentStatus);
 
     Optional<PaymentEntity> findByStripeSessionId(final String stripeSessionId);
 

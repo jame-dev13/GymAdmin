@@ -18,6 +18,8 @@ public interface PaymentRepository extends CustomJpaRepository<PaymentEntity, Lo
 
    Optional<PaymentEntity> findByCustomer_User_EmailAndStatus(final String customerEmail, final PaymentStatus paymentStatus);
 
+   Optional<PaymentEntity> findByCustomerIdAndStatus(final Long customerId, final PaymentStatus paymentStatus);
+
    boolean existsByStripeSessionIdAndStatus(final String sessionId, final PaymentStatus paymentStatus);
 
    List<PaymentEntity> findAllByStatusAndCreatedAtBefore(final PaymentStatus status, final Instant before);
