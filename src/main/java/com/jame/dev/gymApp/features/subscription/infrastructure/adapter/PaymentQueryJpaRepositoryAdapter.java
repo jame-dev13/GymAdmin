@@ -50,4 +50,9 @@ public class PaymentQueryJpaRepositoryAdapter implements PaymentQueryRepository 
    public Page<PaymentEntity> finaPage(Specification<PaymentEntity> spec, Pageable pageable) {
       return paymentRepository.findAll(spec, pageable);
    }
+
+   @Override
+   public Optional<PaymentEntity> findLastPaymentByCustomerId(long customerId) {
+      return paymentRepository.findFirstByCustomer_IdOrderByCreatedAtDesc(customerId);
+   }
 }
