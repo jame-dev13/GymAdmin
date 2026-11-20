@@ -5,6 +5,7 @@ import com.jame.dev.gymApp.features.auth.domain.model.AuthPrincipal;
 import com.jame.dev.gymApp.features.subscription.api.response.PaymentResponse;
 import com.jame.dev.gymApp.features.subscription.api.response.RetryResponse;
 import com.jame.dev.gymApp.features.subscription.application.support.handler.RetryPaymentHandler;
+import com.jame.dev.gymApp.features.subscription.application.usecases.query.GetLastPaymentMadeUseCase;
 import com.jame.dev.gymApp.features.subscription.application.usecases.query.GetPaymentByCurrent;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -28,18 +29,16 @@ public class PaymentCurrentController {
 
    private final GetPaymentByCurrent getPaymentByCurrent;
    private final RetryPaymentHandler retryPaymentHandler;
+   private final GetLastPaymentMadeUseCase getLastPaymentMadeUseCase;
 
    private static final String AUTHENTICATION_PRINCIPAL_NULL_MSG = "Authentication is required";
 
    @GetMapping
    public ResponseEntity<Page<PaymentResponse>> getPaymentPageByCustomerId(
       @AuthenticationPrincipal
-      @NotNull(message = AUTHENTICATION_PRINCIPAL_NULL_MSG)
-      final AuthPrincipal authentication,
-      @RequestParam(name = "search", required = false)
-      final String search,
-      @PageableDefault(sort = "id", direction = Sort.Direction.DESC)
-      final Pageable pageable) {
+      @NotNull(message = AUTHENTICATION_PRINCIPAL_NULL_MSG) final AuthPrincipal authentication,
+      @RequestParam(name = "search", required = false) final String search,
+      @PageableDefault(sort = "id", direction = Sort.Direction.DESC) final Pageable pageable) {
       final var pageDto = getPaymentByCurrent.getPaymentByCurrent(authentication, search, pageable);
       final Page<PaymentResponse> page = new PageImpl<>(pageDto.content(), pageable, pageDto.totalElements());
       return ResponseEntity.ok(page);
@@ -48,8 +47,16 @@ public class PaymentCurrentController {
    @PostMapping("/retry")
    public ResponseEntity<RetryResponse> retryPayment(
       @AuthenticationPrincipal
-      @NotNull(message = AUTHENTICATION_PRINCIPAL_NULL_MSG)
-      final AuthPrincipal principal) {
+      @NotNull(message = AUTHENTICATION_PRINCIPAL_NULL_MSG) final AuthPrincipal principal) {
       return retryPaymentHandler.handleSubscriptionPaymentRetry(principal);
+   }
+
+   @GetMapping("/last")
+   public ResponseEntity<PaymentResponse> getLastPaymentMade(
+      @AuthenticationPrincipal
+      @NotNull(message = AUTHENTICATION_PRINCIPAL_NULL_MSG)
+      AuthPrincipal authPrincipal) {
+      final PaymentResponse payment = getLastPaymentMadeUseCase.getLastPaymentMade(authPrincipal);
+      return ResponseEntity.ok(payment);
    }
 }

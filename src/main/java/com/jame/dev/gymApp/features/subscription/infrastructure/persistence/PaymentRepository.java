@@ -60,4 +60,6 @@ public interface PaymentRepository extends CustomJpaRepository<PaymentEntity, Lo
       @Param("search") final String search,
       final Pageable pageable
    );
+
+   Optional<PaymentEntity> findFirstByCustomer_IdOrderByCreatedAtDesc(Long customerId);
 }

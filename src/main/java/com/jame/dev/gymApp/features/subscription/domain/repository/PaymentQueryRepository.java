@@ -21,4 +21,6 @@ public interface PaymentQueryRepository {
     Optional<PaymentEntity> findByStripeSessionId(final String stripeSessionId);
 
     Page<PaymentEntity> finaPage(final Specification<PaymentEntity> spec, final Pageable pageable);
+
+    Optional<PaymentEntity> findLastPaymentByCustomerId(long customerId);
 }
