@@ -31,6 +31,8 @@ public interface SubscriptionRepository extends CustomJpaRepository<Subscription
 
    boolean existsByCustomer(final CustomerEntity customer);
 
+   boolean existsByCustomer_Id(final long customerId);
+
    @NativeQuery("""
       SELECT * FROM subscriptions s
       WHERE s.id = :id AND

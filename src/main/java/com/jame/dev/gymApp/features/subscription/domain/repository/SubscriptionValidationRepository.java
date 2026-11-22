@@ -7,6 +7,8 @@ public interface SubscriptionValidationRepository {
 
    boolean existsById(final long id);
 
+   boolean existsByCustomerId(final long customerId);
+
    boolean existsByIdAndCustomerEmail(final long subscriptionId, final String email);
 
    boolean existsByCustomer(final CustomerEntity customerEntity);

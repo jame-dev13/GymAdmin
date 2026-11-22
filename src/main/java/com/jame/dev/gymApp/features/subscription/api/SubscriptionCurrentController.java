@@ -4,6 +4,7 @@ import com.jame.dev.gymApp.features.auth.domain.model.AuthPrincipal;
 import com.jame.dev.gymApp.features.subscription.api.request.PaymentRequest;
 import com.jame.dev.gymApp.features.subscription.api.request.SubscriptionCurrentRequest;
 import com.jame.dev.gymApp.features.subscription.api.response.SubscriptionCheckoutResponse;
+import com.jame.dev.gymApp.features.subscription.api.response.SubscriptionExistsResponse;
 import com.jame.dev.gymApp.features.subscription.api.response.SubscriptionResponse;
 import com.jame.dev.gymApp.features.subscription.api.response.SubscriptionSessionResponse;
 import com.jame.dev.gymApp.features.subscription.application.contract.StripeCheckoutService;
@@ -13,6 +14,7 @@ import com.jame.dev.gymApp.features.subscription.application.usecases.mutation.c
 import com.jame.dev.gymApp.features.subscription.application.usecases.mutation.current.FinalizeCurrentSubscriptionUseCase;
 import com.jame.dev.gymApp.features.subscription.application.usecases.mutation.current.RenewCurrentSubscriptionUseCase;
 import com.jame.dev.gymApp.features.subscription.application.usecases.query.GetSubscriptionByCurrentUseCase;
+import com.jame.dev.gymApp.features.subscription.application.usecases.validation.ExistSubscriptionByCustomerIdUseCase;
 import com.jame.dev.gymApp.infrastructure.annotation.NotNullObject;
 import com.jame.dev.gymApp.infrastructure.async.AsyncResolver;
 import jakarta.validation.Valid;
@@ -42,9 +44,10 @@ public class SubscriptionCurrentController {
    private final DeleteCurrentSubscriptionUseCase subscriptionDelete;
    private final StripeCheckoutService stripeCheckoutService;
    private final CreatePaymentUseCase createPaymentUseCase;
+   private final ExistSubscriptionByCustomerIdUseCase existSubscriptionByCustomerIdUseCase;
 
    @GetMapping
-   public ResponseEntity<SubscriptionResponse> getCurrentSub (final @AuthenticationPrincipal AuthPrincipal principal) {
+   public ResponseEntity<SubscriptionResponse> getCurrentSub(final @AuthenticationPrincipal AuthPrincipal principal) {
       return ResponseEntity.ok(subscriptionByCurrentUseCase.getCurrent(principal));
    }
 
@@ -115,5 +118,10 @@ public class SubscriptionCurrentController {
    public ResponseEntity<Void> dropSubscription(final @AuthenticationPrincipal AuthPrincipal principal) {
       subscriptionDelete.delete(principal);
       return ResponseEntity.noContent().build();
+   }
+
+   @GetMapping("/exists")
+   public ResponseEntity<SubscriptionExistsResponse> hasSubscription(final @AuthenticationPrincipal AuthPrincipal principal) {
+      return ResponseEntity.ok(existSubscriptionByCustomerIdUseCase.existByCustomerId(principal));
    }
 }
