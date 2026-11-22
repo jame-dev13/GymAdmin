@@ -18,6 +18,11 @@ public class SubscriptionValidationJpaRepositoryAdapter implements SubscriptionV
    }
 
    @Override
+   public boolean existsByCustomerId(long customerId) {
+      return subscriptionRepository.existsByCustomer_Id(customerId);
+   }
+
+   @Override
    public boolean existsByIdAndCustomerEmail(long subscriptionId, String email) {
       return subscriptionRepository.existsByIdAndCustomer_User_Email(subscriptionId, email);
    }

@@ -18,7 +18,7 @@ import static com.jame.dev.gymApp.application.model.CacheValues.SUBSCRIPTIONS;
 @Documented
 @Caching(evict = {
    @CacheEvict(value = {SUBSCRIPTIONS, CacheMetricValues.OVERVIEW, CacheEvolutionMetricsValues.SUBSCRIBER_EVOLUTION, CacheValues.PAYMENTS, SubscriberNotificationCacheValues.VALUE }, allEntries = true),
-   @CacheEvict(value = SUBSCRIPTION, keyGenerator = "authPrincipalCurrentKeyGen"),
+   @CacheEvict(value = SUBSCRIPTION, keyGenerator = "appKeyGenerator"),
 })
 public @interface EvictCurrentOnDeleteSub {
 }

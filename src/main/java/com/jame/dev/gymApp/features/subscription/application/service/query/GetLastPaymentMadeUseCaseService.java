@@ -7,6 +7,8 @@ import com.jame.dev.gymApp.features.subscription.api.response.PaymentResponse;
 import com.jame.dev.gymApp.features.subscription.application.usecases.query.GetLastPaymentMadeUseCase;
 import com.jame.dev.gymApp.features.subscription.domain.repository.PaymentQueryRepository;
 import com.jame.dev.gymApp.features.subscription.infrastructure.payment.mapper.PaymentMapper;
+import com.jame.dev.gymApp.infrastructure.security.lock.CheckLockProcess;
+import com.jame.dev.gymApp.infrastructure.security.lock.LockKeys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -15,13 +17,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@CheckLockProcess(keys = { LockKeys.PG_RESTORE })
 public class GetLastPaymentMadeUseCaseService implements GetLastPaymentMadeUseCase {
    private final PaymentQueryRepository paymentQueryRepository;
    private final PaymentMapper paymentMapper;
 
    @Override
    @Cacheable(
-      key = CacheValues.PAYMENTS,
+      value = CacheValues.PAYMENTS,
       keyGenerator = "appKeyGenerator",
       unless = "#result == null"
    )
