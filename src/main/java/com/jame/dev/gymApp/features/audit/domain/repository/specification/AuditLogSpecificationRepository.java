@@ -2,6 +2,7 @@ package com.jame.dev.gymApp.features.audit.domain.repository.specification;
 
 import com.jame.dev.gymApp.features.audit.domain.model.AuditLogDocument;
 import com.jame.dev.gymApp.features.audit.infrastructure.specification.AuditLogSpecifications;
+import com.jame.dev.gymApp.features.auth.domain.model.AuthPrincipal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -21,19 +22,18 @@ public class AuditLogSpecificationRepository implements AuditLogSpecifications {
 
    private final MongoTemplate mongoTemplate;
 
-   private static final Function<String, Criteria> actorCriteria =
-      username -> Criteria.where("actor.username")
-         .regex("^" + Pattern.quote(username) + "$", "i");
+   private static final Function<Long, Criteria> actorCriteria =
+      actorId -> Criteria.where("actor.userId").eq(actorId);
 
    @Override
    public Page<AuditLogDocument> findAllByCurrentActor(
+      AuthPrincipal authPrincipal,
       Pageable pageable,
-      String actorUsername,
       String search
    ) {
       final Query query = new Query();
 
-      query.addCriteria(actorCriteria.apply(actorUsername));
+      query.addCriteria(actorCriteria.apply(authPrincipal.id()));
 
       if (search != null && !search.isBlank()) {
          query.addCriteria(
