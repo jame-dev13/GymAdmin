@@ -1,8 +1,10 @@
 package com.jame.dev.gymApp.features.comments.domain.repository;
 
 import com.jame.dev.gymApp.features.comments.domain.model.CommentDocument;
+import com.jame.dev.gymApp.features.comments.domain.model.CommentReply;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 
 import java.util.Optional;
 import java.util.Set;
@@ -18,4 +20,6 @@ public interface CommentQueryRepository {
    Optional<CommentDocument> findByIdAndAuthorId(final UUID commentId, final Long authorId);
 
    Set<CommentDocument> findBestRated(final int limit);
+
+   Slice<CommentReply> findAllRepliesFor(final UUID commentId, final Pageable pageable);
 }

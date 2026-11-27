@@ -8,7 +8,7 @@ import java.util.Set;
 
 @Builder
 public record CommentPublicResponse(
-   @JsonProperty("content") Set<CommentPublic> content
+   @JsonProperty("comment") Set<CommentPublic> content
    ) {
 }
 

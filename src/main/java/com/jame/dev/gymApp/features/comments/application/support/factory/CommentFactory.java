@@ -1,6 +1,7 @@
 package com.jame.dev.gymApp.features.comments.application.support.factory;
 
 import com.jame.dev.gymApp.application.dto.PageDto;
+import com.jame.dev.gymApp.features.auth.domain.model.AuthPrincipal;
 import com.jame.dev.gymApp.features.comments.application.request.CommentRequest;
 import com.jame.dev.gymApp.features.comments.application.response.CommentResponse;
 import com.jame.dev.gymApp.features.comments.application.support.mapper.CommentMapper;
@@ -33,10 +34,10 @@ public class CommentFactory {
       return fromRequest(commentRequest, null);
    }
 
-   public CommentDocument fromRequest(CommentRequest commentRequest, Long authorId) {
+   public CommentDocument fromRequest(CommentRequest commentRequest, AuthPrincipal principal) {
       return CommentDocument.builder()
-         .authorId(authorId)
-         .from(commentRequest.from())
+         .authorId(principal.id())
+         .from(principal.username())
          .comment(commentRequest.comment())
          .commentType(commentRequest.commentType())
          .rate(commentRequest.rate())

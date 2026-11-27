@@ -1,6 +1,6 @@
 package com.jame.dev.gymApp.features.comments.infrastructure.aspect;
 
-import com.jame.dev.gymApp.features.comments.application.request.CommentRequest;
+import com.jame.dev.gymApp.features.comments.application.model.Commentable;
 import com.jame.dev.gymApp.features.comments.infrastructure.filter.OffenseTextFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,13 +25,13 @@ public class CommentSavingProxy {
    public Object interceptCommentSavingFlow(ProceedingJoinPoint pj) throws Throwable {
       log.info("Comment Saving proxy reached.");
       try {
-         final CommentRequest commentRequest = Arrays.stream(pj.getArgs())
-            .filter(CommentRequest.class::isInstance)
-            .map(CommentRequest.class::cast)
+         final Commentable commentable = Arrays.stream(pj.getArgs())
+            .filter(Commentable.class::isInstance)
+            .map(Commentable.class::cast)
             .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException("Comment request parameter not found."));
+            .orElseThrow(() -> new IllegalArgumentException("'comment' parameter not    found."));
 
-         offenseTextFilter.applyFilter(commentRequest.comment());
+         offenseTextFilter.applyFilter(commentable.comment());
          return pj.proceed();
       } catch (Throwable th) {
          log.error("{}", th.getMessage(), th);

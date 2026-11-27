@@ -12,7 +12,6 @@ import java.lang.annotation.*;
    evict = {
       @CacheEvict(cacheNames = {CommentCacheValues.COMMENTS}, keyGenerator = "pageKeyGenerator", allEntries = true),
       @CacheEvict(cacheNames = {CommentCacheValues.COMMENT}, key = "#commentId"),
-      @CacheEvict(cacheNames = {CommentCacheValues.CURRENT_COMMENTS}, allEntries = true),
    }
 )
 public @interface EvictCurrentCommentsOnDelete {

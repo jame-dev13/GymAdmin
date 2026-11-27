@@ -34,9 +34,9 @@ public class UpdateCurrentCommentUseCaseService implements UpdateCurrentCommentU
       final var comment = commentQueryRepository.findByIdAndAuthorId(commentId, principal.id())
          .orElseThrow(() -> new NotFoundException("Comment not found."));
 
-      comment.setFrom(commentRequest.from());
       comment.setComment(commentRequest.comment());
       comment.setCommentType(commentRequest.commentType());
+
       if (commentRequest.rate() != null) {
          comment.setRate(commentRequest.rate());
       }
