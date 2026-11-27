@@ -22,8 +22,8 @@ public class GetCurrentCommentPageUseCaseService implements GetCurrentCommentPag
 
    @Override
    @Cacheable(
-      value = CommentCacheValues.CURRENT_COMMENTS,
-      keyGenerator = "commentCurrentPageKeyGenerator",
+      value = CommentCacheValues.COMMENTS,
+      keyGenerator = "pageKeyGenerator",
       unless = "#result == null || #result.content.isEmpty()"
    )
    public PageDto<CommentResponse> getPage(

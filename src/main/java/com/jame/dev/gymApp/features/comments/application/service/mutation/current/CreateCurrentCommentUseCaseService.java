@@ -24,7 +24,7 @@ public class CreateCurrentCommentUseCaseService implements CreateCurrentCommentU
    @EvictCurrentCommentsOnCreate
    public CommentResponse create(final AuthPrincipal principal, final CommentRequest commentRequest) {
       log.info("create current comment use case service.");
-      final var comment = commentFactory.fromRequest(commentRequest, principal.id());
+      final var comment = commentFactory.fromRequest(commentRequest, principal);
       final var commentSaved = commentMutationRepository.save(comment);
       return commentFactory.fromDocument(commentSaved);
    }

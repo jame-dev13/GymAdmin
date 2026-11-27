@@ -15,6 +15,7 @@ public record CommentResponse(
    @JsonProperty("commentType") CommentType commentType,
    @JsonProperty("rate") Double rate,
    @JsonProperty("createdAt") Instant createdAt,
-   @JsonProperty("editedAt") Instant editedAt
+   @JsonProperty("editedAt") Instant editedAt,
+   @JsonProperty("hasReplies") boolean hasReplies
 ) {
 }

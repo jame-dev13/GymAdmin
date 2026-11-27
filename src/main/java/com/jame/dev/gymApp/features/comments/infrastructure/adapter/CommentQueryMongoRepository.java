@@ -1,22 +1,21 @@
 package com.jame.dev.gymApp.features.comments.infrastructure.adapter;
 
 import com.jame.dev.gymApp.features.comments.domain.model.CommentDocument;
+import com.jame.dev.gymApp.features.comments.domain.model.CommentReply;
 import com.jame.dev.gymApp.features.comments.domain.repository.CommentQueryRepository;
 import com.jame.dev.gymApp.features.comments.infrastructure.persistence.CommentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Repository
 @RequiredArgsConstructor
 public class CommentQueryMongoRepository implements CommentQueryRepository {
    private final CommentRepository commentRepository;
-
 
    @Override
    public Page<CommentDocument> findAll(Pageable pageable, String search) {
@@ -41,5 +40,10 @@ public class CommentQueryMongoRepository implements CommentQueryRepository {
    @Override
    public Set<CommentDocument> findBestRated(int limit) {
       return commentRepository.findBestRatedLimited(limit);
+   }
+
+   @Override
+   public Slice<CommentReply> findAllRepliesFor(UUID commentId, Pageable pageable) {
+      return commentRepository.findRepliesForComment(commentId, pageable);
    }
 }
