@@ -18,6 +18,11 @@ public class CommentQueryMongoRepository implements CommentQueryRepository {
    private final CommentRepository commentRepository;
 
    @Override
+   public Page<CommentDocument> findAll(Pageable pageable) {
+      return commentRepository.findAll(pageable);
+   }
+
+   @Override
    public Page<CommentDocument> findAll(Pageable pageable, String search) {
       return commentRepository.search(pageable, search);
    }

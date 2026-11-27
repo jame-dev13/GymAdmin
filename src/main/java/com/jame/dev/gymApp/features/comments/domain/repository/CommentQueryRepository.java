@@ -11,6 +11,8 @@ import java.util.Set;
 import java.util.UUID;
 
 public interface CommentQueryRepository {
+   Page<CommentDocument> findAll(final Pageable pageable);
+
    Page<CommentDocument> findAll(final Pageable pageable, final String search);
 
    Page<CommentDocument> findAllByAuthorId(final Long authorId, final Pageable pageable, final String search);
