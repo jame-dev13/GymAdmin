@@ -4,6 +4,7 @@ import com.jame.dev.gymApp.application.dto.PageDto;
 import com.jame.dev.gymApp.features.auth.domain.model.AuthPrincipal;
 import com.jame.dev.gymApp.features.comments.application.request.CommentRequest;
 import com.jame.dev.gymApp.features.comments.application.response.CommentResponse;
+import com.jame.dev.gymApp.features.comments.application.response.CommunityCommentResponse;
 import com.jame.dev.gymApp.features.comments.application.support.mapper.CommentMapper;
 import com.jame.dev.gymApp.features.comments.domain.model.CommentDocument;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,21 @@ public class CommentFactory {
    public PageDto<CommentResponse> fromPage(final Page<CommentDocument> commentsPage) {
       return PageDto.<CommentResponse>builder()
          .content(commentsPage.getContent().stream().map(commentMapper::toResponse).toList())
+         .page(commentsPage.getNumber())
+         .size(commentsPage.getSize())
+         .totalElements(commentsPage.getTotalElements())
+         .sortDirection(commentsPage.getSort().isSorted() ? "ASC" : "DESC")
+         .sortProperty(commentsPage.getSort().toString())
+         .build();
+   }
+
+   public PageDto<CommunityCommentResponse> fromPage(final Page<CommentDocument> commentsPage, AuthPrincipal principal) {
+      final var content = commentsPage.getContent()
+         .stream()
+         .map(cd -> commentMapper.toCommunityCommentResponse(cd, principal))
+         .toList();
+      return PageDto.<CommunityCommentResponse>builder()
+         .content(content)
          .page(commentsPage.getNumber())
          .size(commentsPage.getSize())
          .totalElements(commentsPage.getTotalElements())
